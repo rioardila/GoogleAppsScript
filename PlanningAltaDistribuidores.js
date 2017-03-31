@@ -38,7 +38,7 @@ function onEdit(event) {
   if(valor === "Finalizado" && s.getRange(1,columna).getValue() === "PASO A PROD") {
      var id = s.getRange(r.getRow(),s.getRange("customer_id").getColumn()).getValue();
      var nombre = s.getRange(r.getRow(),s.getRange("customer_name").getColumn()).getValue();
-     var goCounter = s.getRange(57,1).getDisplayValue();
+     var goCounter = s.getRange(s.getRange("prod_total").getRow(),1).getDisplayValue();
      var email = "joaquim.herrada@roca.net";
      var subject = "[Marketplace] FELICIDADES!! Pasa a GO LIVE " + nombre + "!!!";
      var body;
@@ -76,9 +76,9 @@ function onEdit(event) {
      SpreadsheetApp.getActiveSpreadsheet().toast('Email enviado.');
   }
   
-  if(valor === "test" && s.getRange(1,columna).getValue() === "ALERTAS !") {
-    var id = s.getRange(r.getRow(),s.getRange("newEmail").getColumn()).getValue();
-        SpreadsheetApp.getActiveSpreadsheet().toast('Mensaje de test: '+id);
+  if(valor === "test") {
+    var goCounter = s.getRange(s.getRange("prod_total").getRow(),1).getDisplayValue();
+    SpreadsheetApp.getActiveSpreadsheet().toast('Counter: ' + goCounter);
   }
     
 };

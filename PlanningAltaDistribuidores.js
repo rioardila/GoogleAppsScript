@@ -11,7 +11,7 @@ function onEdit(event) {
   var ui = SpreadsheetApp.getUi();
   
   //PRUEBAS FINALIZADAS
-  if(valor === "LDAP" && s.getRange(1,columna).getValue() === "PASO A PROD") {
+  if(valor === "LDAP" && s.getRange("to_prod").getColumn() === r.getColumn()) {
      var id = s.getRange(r.getRow(),s.getRange("customer_id").getColumn()).getValue();
      var nombre = s.getRange(r.getRow(),s.getRange("customer_name").getColumn()).getValue();
      var emailDist = s.getRange(r.getRow(),s.getRange("customer_email").getColumn()).getValue();
@@ -23,7 +23,7 @@ function onEdit(event) {
   }
   
   //EN PROCESO EN PROP
-  if(valor === "En proceso" && s.getRange(1,columna).getValue() === "PASO A PROD") {
+  if(valor === "En proceso" && s.getRange("to_prod").getColumn() === r.getColumn()) {
      var id = s.getRange(r.getRow(),s.getRange("customer_id").getColumn()).getValue();
      var nombre = s.getRange(r.getRow(),s.getRange("customer_name").getColumn()).getValue();
      var emailDist = s.getRange(r.getRow(),s.getRange("customer_email").getColumn()).getValue();
@@ -35,7 +35,7 @@ function onEdit(event) {
   }
   
   //FINALIZADO EN PROP
-  if(valor === "Finalizado" && s.getRange(1,columna).getValue() === "PASO A PROD") {
+  if(valor === "Finalizado" && s.getRange("to_prod").getColumn() === r.getColumn()) {
      var id = s.getRange(r.getRow(),s.getRange("customer_id").getColumn()).getValue();
      var nombre = s.getRange(r.getRow(),s.getRange("customer_name").getColumn()).getValue();
      var goCounter = s.getRange(s.getRange("prod_total").getRow(),1).getDisplayValue();
@@ -53,7 +53,7 @@ function onEdit(event) {
   }
   
     //NUEVA ALTA EN AUTH
-    if(valor === "LDAP" && s.getRange(1,columna).getValue() === "Email LDAP") {
+    if(valor === "LDAP" && s.getRange("to_auth").getColumn() === r.getColumn()) {
      var id = s.getRange(r.getRow(),s.getRange("customer_id").getColumn()).getValue();
      var nombre = s.getRange(r.getRow(),s.getRange("customer_name").getColumn()).getValue();
      var emailDist = s.getRange(r.getRow(),s.getRange("customer_email").getColumn()).getValue();
@@ -65,7 +65,7 @@ function onEdit(event) {
   }
   
   //AÑADIDO EN LDAP AUTH
-  if(valor === "No" && s.getRange(1,columna).getValue() === "Email LDAP") {
+  if(valor === "No" && s.getRange("to_auth").getColumn() === r.getColumn()) {
      var id = s.getRange(r.getRow(),s.getRange("customer_id").getColumn()).getValue();
      var nombre = s.getRange(r.getRow(),s.getRange("customer_name").getColumn()).getValue();
      var emailDist = s.getRange(r.getRow(),s.getRange("customer_email").getColumn()).getValue();
@@ -76,7 +76,7 @@ function onEdit(event) {
      SpreadsheetApp.getActiveSpreadsheet().toast('Email enviado.');
   }
   
-  if(valor === "test") {
+  if(valor === "test" && s.getRange("to_prod").getColumn() === r.getColumn()) {
     var goCounter = s.getRange(s.getRange("prod_total").getRow(),1).getDisplayValue();
     SpreadsheetApp.getActiveSpreadsheet().toast('Counter: ' + goCounter);
   }

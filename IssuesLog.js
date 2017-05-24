@@ -4,51 +4,63 @@
 
 function onEdit(event) {
   var r = event.range;
-  var valor = r.getValue();
+  var valor = r.getValue().toUpperCase();
   var columna = r.getColumn();
   var s = event.source.getActiveSheet();
   var url = event.source.getUrl();
   
+  //transform column's alias to number and save them in an array
+  var arrayColumnas = [];
+  arrayColumnas.push(s.getRange("issueSTATUS").getColumn());
+  arrayColumnas.push(s.getRange("issueDEV").getColumn());
+  arrayColumnas.push(s.getRange("issueAUTH").getColumn());
+  arrayColumnas.push(s.getRange("issuePROD").getColumn());
+  
   //CHECK IF ISSUE IS SOLVED
-  if((valor === "solved" || valor === "Solved") && (columna === 9 || columna === 16 || columna === 17 || columna === 18)) {
-     var nombre = s.getRange(r.getRow(),5).getValue();
-     var issueID = s.getRange(r.getRow(),1).getValue();
-     var entorno;
+  if(valor === "SOLVED" && arrayColumnas.indexOf(columna) > -1) {
+     var nombre = s.getRange(r.getRow(),s.getRange("issueRequester").getColumn()).getValue();
+     var issueID = s.getRange(r.getRow(),s.getRange("issueID").getColumn()).getValue();
+     var descripcion = s.getRange(r.getRow(),s.getRange("issueDescription").getColumn()).getValue();
+     var comentarios = s.getRange(r.getRow(),s.getRange("issueComments").getColumn()).getValue();
+     var entorno, subject;
      switch (columna) {
-       case 16:
+       case s.getRange("issueDEV").getColumn():
          entorno = "DEV";
          break;
-       case 17:
+       case s.getRange("issueAUTH").getColumn():
          entorno = "AUTH";
          break;
-       case 18:
+       case s.getRange("issuePROD").getColumn():
          entorno = "PROD";
      }
     
     //CHECK SUBMITED BY. Each person can personalize its own email, subject and body
-     if (nombre === "A. Ardila") {
-        var email = "aardila@viewnext.com";
-        var subject;
-        if (columna === 9) subject = "Tu issue " + issueID + " ha sido solucionado.";
-        else subject = "Tu issue " + issueID + " ha sido solucionado en " + entorno + ".";
-        var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + s.getRange(r.getRow(),2).getValue() + "\n\nComentarios:\n\n" + s.getRange(r.getRow(),12).getValue() + "\n\n" + url;
-        GmailApp.sendEmail(email, "[ISSUES LOG] "+subject, body);
-     }
-     else if (nombre === "J. Reche") {
-        var email = "jcreche@viewnext.com";
-        var subject;
-        if (columna === 9) subject = "Tu issue " + issueID + " ha sido solucionado.";
-        else subject = "Tu issue " + issueID + " ha sido solucionado en " + entorno + ".";
-        var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + s.getRange(r.getRow(),2).getValue() + "\n\nComentarios:\n\n" + s.getRange(r.getRow(),12).getValue() + "\n\n" + url;
-        GmailApp.sendEmail(email, "[ISSUES LOG] "+subject, body);
-     }
+    
+    if (nombre === "A. Ardila") {
+      var email = "aardila@viewnext.com";
+      if (columna === s.getRange("issueSTATUS").getColumn()) subject = "Tu issue " + issueID + " ha sido solucionado.";
+      else subject = "Tu issue " + issueID + " ha sido solucionado en " + entorno + ".";
+      var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + descripcion +
+        "\n\nComentarios:\n\n" + comentarios + "\n\n" + url;
+      //SpreadsheetApp.getActiveSpreadsheet().toast(body);
+      GmailApp.sendEmail(email, "[ISSUES LOG] "+subject, body);
+    }
+    
+    else if (nombre === "J. Reche") {
+      var email = "jcreche@viewnext.com";
+      if (columna === s.getRange("issueSTATUS").getColumn()) subject = "Tu issue " + issueID + " ha sido solucionado.";
+      else subject = "Tu issue " + issueID + " ha sido solucionado en " + entorno + ".";
+      var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + descripcion +
+        "\n\nComentarios:\n\n" + comentarios + "\n\n" + url;
+      GmailApp.sendEmail(email, "[ISSUES LOG] "+subject, body);
+    } 
     
     else if (nombre === "D. Noya") {
       var email = "diana.noya@roca.net";
-      var subject;
-      if (columna === 9) subject = "Tu issue " + issueID + " ha sido solucionado.";
+      if (columna === s.getRange("issueSTATUS").getColumn()) subject = "Tu issue " + issueID + " ha sido solucionado.";
       else subject = "Tu issue " + issueID + " ha sido solucionado en " + entorno + ".";
-      var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + s.getRange(r.getRow(),2).getValue() + "\n\nComentarios:\n\n" + s.getRange(r.getRow(),12).getValue() + "\n\n" + url;
+      var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + descripcion +
+        "\n\nComentarios:\n\n" + comentarios + "\n\n" + url;
       GmailApp.sendEmail(email, "[ISSUES LOG] "+subject, body);
      }
     
@@ -57,7 +69,8 @@ function onEdit(event) {
       var subject;
       if (columna === 9) subject = "Tu issue " + issueID + " ha sido solucionado.";
       else subject = "Tu issue " + issueID + " ha sido solucionado en " + entorno + ".";
-      var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + s.getRange(r.getRow(),2).getValue() + "\n\nComentarios:\n\n" + s.getRange(r.getRow(),12).getValue() + "\n\n" + url;
+      var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + s.getRange(r.getRow(),2).getValue() +
+      "\n\nComentarios:\n\n" + s.getRange(r.getRow(),12).getValue() + "\n\n" + url;
       GmailApp.sendEmail(email, "[ISSUES LOG] "+subject, body);
      }*/
     
@@ -68,9 +81,15 @@ function onEdit(event) {
         var subject;
         if (columna === 9) subject = "Tu issue " + issueID + " ha sido solucionado.";
         else subject = "Tu issue " + issueID + " ha sido solucionado en " + entorno + ".";
-        var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + s.getRange(r.getRow(),2).getValue() + "\n\nComentarios:\n\n" + s.getRange(r.getRow(),12).getValue() + "\n\n" + url;
+        var body = "Hola " + nombre + ",\n\n" + subject + "\n\nDescripcion:\n\n" + s.getRange(r.getRow(),2).getValue() +
+        "\n\nComentarios:\n\n" + s.getRange(r.getRow(),12).getValue() + "\n\n" + url;
         GmailApp.sendEmail(email, "[ISSUES LOG] "+subject, body);
      }
      */
+  }
+  
+  //TESTING CODE
+  if (valor === "EGG" && columna === s.getRange("issueDEV").getColumn()) {
+    SpreadsheetApp.getActiveSpreadsheet().toast('EASTER EGG HERE!');
   }
 };

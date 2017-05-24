@@ -34,6 +34,13 @@ function onEdit(event) {
          entorno = "PROD";
      }
     
+    //Save last status date in Status date column
+    s.getRange(r.getRow(),s.getRange("issueStatusDate").getColumn()).setValue(new Date());
+    //Save Solution Date if necessary
+    if (columna === s.getRange("issueSTATUS").getColumn()) {
+      s.getRange(r.getRow(),s.getRange("issueSolutionDate").getColumn()).setValue(new Date());    
+    }
+    
     //CHECK SUBMITED BY. Each person can personalize its own email, subject and body
     
     if (nombre === "A. Ardila") {
@@ -88,8 +95,14 @@ function onEdit(event) {
      */
   }
   
+  //SAVED AS A NOTE WHEN THE ISSUE HAS BEEN CLOSED
+  if(valor === "CLOSED" && columna === s.getRange("issueSTATUS").getColumn()) {
+    r.setNote("Issue closed on: " + new Date());  
+  }
+  
   //TESTING CODE
   if (valor === "EGG" && columna === s.getRange("issueDEV").getColumn()) {
     SpreadsheetApp.getActiveSpreadsheet().toast('EASTER EGG HERE!');
+    s.getRange(r.getRow(),s.getRange("issueSolutionDate").getColumn()).setValue(new Date());
   }
 };

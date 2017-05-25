@@ -36,13 +36,13 @@ function onEdit(event) {
     
     //Save last status date in Status date column
     s.getRange(r.getRow(),s.getRange("issueStatusDate").getColumn()).setValue(new Date());
-    //Save Solution Date if necessary
+    //Save Solution Date if the edited cell belongs to Status version 1.1 column and its value is 'SOLVED'
     if (columna === s.getRange("issueSTATUS").getColumn()) {
       s.getRange(r.getRow(),s.getRange("issueSolutionDate").getColumn()).setValue(new Date());    
     }
     
-    //CHECK SUBMITED BY. Each person can personalize its own email, subject and body
     
+    //CHECK SUBMITED BY. Each person can personalize its own email, subject and body  
     if (nombre === "A. Ardila") {
       var email = "aardila@viewnext.com";
       if (columna === s.getRange("issueSTATUS").getColumn()) subject = "Tu issue " + issueID + " ha sido solucionado.";
@@ -95,9 +95,36 @@ function onEdit(event) {
      */
   }
   
-  //SAVED AS A NOTE WHEN THE ISSUE HAS BEEN CLOSED
+  if (columna === s.getRange("issueComments").getColumn()) {
+    //Save last status date in Status date column
+    s.getRange(r.getRow(),s.getRange("issueStatusDate").getColumn()).setValue(new Date());
+  }
+    
+  //Save a note with the date the issue was closed
   if(valor === "CLOSED" && columna === s.getRange("issueSTATUS").getColumn()) {
     r.setNote("Issue closed on: " + new Date());  
+  }
+  
+  //Automatically changes status to "Pending Prod" if it's closed in DEV and AUTH
+  if(valor === "CLOSED" && (columna === s.getRange("issueDEV").getColumn() ||
+    columna === s.getRange("issueAUTH").getColumn())) {
+    if (s.getRange(r.getRow(),s.getRange("issueDEV").getColumn()).getValue().toUpperCase() === "CLOSED" &&
+        s.getRange(r.getRow(),s.getRange("issueAUTH").getColumn()).getValue().toUpperCase() === "CLOSED") {
+      if(s.getRange(r.getRow(),s.getRange("issuePROD").getColumn()).getValue().toUpperCase() !== "CLOSED")
+        s.getRange(r.getRow(),s.getRange("issueSTATUS").getColumn()).setValue("Pending Prod");
+      else { //all environments are CLOSED
+        s.getRange(r.getRow(),s.getRange("issueSTATUS").getColumn()).setValue("Closed");
+        s.getRange(r.getRow(),s.getRange("issueSTATUS").getColumn()).setNote("Issue closed on: " + new Date());   
+      }
+    }
+  }
+  
+  //Automatically changes status to "Closed" if it's closed in all environments
+  if(valor === "CLOSED" && columna === s.getRange("issuePROD").getColumn() &&
+    s.getRange(r.getRow(),s.getRange("issueDEV").getColumn()).getValue().toUpperCase() === "CLOSED" &&
+    s.getRange(r.getRow(),s.getRange("issueAUTH").getColumn()).getValue().toUpperCase() === "CLOSED") {
+      s.getRange(r.getRow(),s.getRange("issueSTATUS").getColumn()).setValue("Closed");
+      s.getRange(r.getRow(),s.getRange("issueSTATUS").getColumn()).setNote("Issue closed on: " + new Date());
   }
   
   //TESTING CODE
